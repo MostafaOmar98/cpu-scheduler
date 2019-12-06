@@ -4,7 +4,8 @@ public abstract class Scheduler {
     protected Integer nProcesses;
     protected Integer contextSwitchingDuration;
     protected List<Process> processes;
-
+    static String spacer = "================================================";
+    static String miniSpacer = "===============";
     Scheduler(Integer nProcesses, Integer contextSwitchingDuration, List<Process> processes)
     {
         this.nProcesses = nProcesses;

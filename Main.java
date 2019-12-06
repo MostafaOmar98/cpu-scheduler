@@ -50,7 +50,9 @@ public class Main {
             System.out.println(spacer);
         }
 
-
+        PriorityScheduler ps = new PriorityScheduler(nProcesses , contextSwitchingDuration , processes);
+        ps.simulate();
+//        System.exit(1);
         Scheduler s = new ShortestJobFirst(nProcesses, contextSwitchingDuration, processes);
         s.simulate();
         s = new SRTF(processes, contextSwitchingDuration);
