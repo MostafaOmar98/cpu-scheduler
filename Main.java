@@ -1,5 +1,7 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -48,7 +50,10 @@ public class Main {
             System.out.println(spacer);
         }
 
+
         Scheduler s = new ShortestJobFirst(nProcesses, contextSwitchingDuration, processes);
+        s.simulate();
+        s = new SRTF(processes, contextSwitchingDuration);
         s.simulate();
     }
 }

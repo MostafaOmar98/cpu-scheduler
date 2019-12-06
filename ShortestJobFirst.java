@@ -1,3 +1,4 @@
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -10,9 +11,10 @@ public class ShortestJobFirst extends Scheduler {
     }
 
     public void simulate()
-    {/*
-     * Shortest Time First
-     */
+    {
+        /*
+         * Shortest Time First
+         */
         Process currentRunningProcess = null;
         Integer currentProcessStartTime = 0;
         Integer contextSwitchingCounter = 0;
@@ -24,10 +26,13 @@ public class ShortestJobFirst extends Scheduler {
         PriorityQueue<Process> burstMinHeap = new PriorityQueue<Process>(1, new ProcessBurstComparator());
         List<Process> order = new ArrayList<>();
 
+        Printer printer = new Printer("ShortestJobFirst.txt");
         for(int time = 0; time <= 2000000000; time++){
 
             if(ContextSwitching){
+
                 if(contextSwitchingCounter >= contextSwitchingDuration){
+                    printer.print(Printer.PrintType.CONTEXT_END, time - 1);
                     ContextSwitching = false;
                     contextSwitchingCounter = 0;
                 }
@@ -37,44 +42,48 @@ public class ShortestJobFirst extends Scheduler {
                 }
             }
 
-            while(!arrivalMinHeap.isEmpty() && arrivalMinHeap.peek().arrivalTime <= time)
-                burstMinHeap.add(arrivalMinHeap.poll());
+            while(!arrivalMinHeap.isEmpty() && arrivalMinHeap.peek().arrivalTime <= time) {
+                Process arrivingProcess = arrivalMinHeap.poll();
+                burstMinHeap.add(arrivingProcess);
+                printer.print(Printer.PrintType.PROCESS_ARRIVE, arrivingProcess.arrivalTime, arrivingProcess); // message for process arrival
+            }
 
             if(currentRunningProcess == null && !burstMinHeap.isEmpty()){ // If there are no processes running and there are processes waiting
                 currentRunningProcess = burstMinHeap.poll(); // Allow process with minimum burst time to enter the CPU
                 currentProcessStartTime = time;
+                printer.print(Printer.PrintType.PROCESS_START, time, currentRunningProcess); // message for process start
             }
 
             if(currentRunningProcess != null){
                 if(currentRunningProcess.burstTime.equals(time - currentProcessStartTime)){ // Current process has finished executing
+
+                    printer.print(Printer.PrintType.PROCESS_END, time - 1, currentRunningProcess); // message for process end
+
                     currentRunningProcess.waitingTime = time - currentRunningProcess.arrivalTime - currentRunningProcess.burstTime;
                     currentRunningProcess.turnaroundTime = time - currentRunningProcess.arrivalTime;
                     order.add(currentRunningProcess);
 
                     currentRunningProcess = null;
 
-                    ContextSwitching = true;
-                    contextSwitchingCounter = 1;
-                    if(contextSwitchingDuration.equals(0)) time--;
+                    if(contextSwitchingDuration.equals(0))
+                        time--;
+                    else {
+                        printer.print(Printer.PrintType.CONTEXT_START, time);
+                        ContextSwitching = true;
+                        contextSwitchingCounter = 1;
+                    }
                 }
             }
         }
 
-        System.out.println(spacer);
-        System.out.println("Shortest Time First Simulation: ");
         Double averageWaitingTime = 0.0;
         Double averageTurnAroundTime = 0.0;
         for(Process p : order){
-            System.out.println(p.PID+":");
-            System.out.println("  -Waiting Time: " + p.waitingTime);
-            System.out.println("  -Turnaround Time: " + p.turnaroundTime);
-            System.out.println(miniSpacer);
-
+            printer.print(p);
             averageWaitingTime += p.waitingTime*1.0/nProcesses;
             averageTurnAroundTime += p.turnaroundTime*1.0/nProcesses;
         }
-        System.out.println("Average waiting time: " + averageWaitingTime);
-        System.out.println("Average turnaround time: " + averageTurnAroundTime);
-        System.out.println(spacer);
+        printer.print(Printer.PrintType.AVERAGE_WAIT, averageWaitingTime);
+        printer.print(Printer.PrintType.AVERAGE_TURNAROUND, averageTurnAroundTime);
     }
 }

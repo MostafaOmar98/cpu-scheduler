@@ -1,22 +1,25 @@
 import javafx.util.Pair;
 
+import java.io.*;
 import java.util.*;
 
-public class SRTF {
+public class SRTF extends Scheduler{
 
-    PriorityQueue<Process> burstMinHeap;
-    PriorityQueue<Process> arrivalMinHeap;
-    Integer contextSwitchingDuration;
-    List<Pair<Integer,String>> executionOrder;
-    List<Process> info;
-    int stop;
-    Map<String,Integer> actual;                // to store initial burst time (used to calculate waiting time
+    private PriorityQueue<Process> burstMinHeap;
+    private PriorityQueue<Process> arrivalMinHeap;
+    private Integer contextSwitchingDuration;
+    private List<Pair<Integer,String>> executionOrder;
+    private List<Process> info;
+    private int stop;
+    private Map<String,Integer> actual;                // to store initial burst time (used to calculate waiting time
+
     // as i am decrementing el burst gowa el loop
-    SRTF(List<Process> list, int n){
+    SRTF(List<Process> list, int contextSwitchingDuration){
+        super(list.size(), contextSwitchingDuration, list);
         stop = list.size();
         executionOrder = new ArrayList<>();
         info = new ArrayList<>();
-        contextSwitchingDuration = n;
+        this.contextSwitchingDuration = contextSwitchingDuration;
         burstMinHeap = new PriorityQueue<>(new ProcessBurstComparator());
         arrivalMinHeap = new PriorityQueue<>(new ProcessArrivalComparator());
         arrivalMinHeap.addAll(list);
@@ -24,16 +27,17 @@ public class SRTF {
         for(Process p : list) actual.put(p.PID,p.burstTime);
     }
 
-    void Simulate(){
+    public void simulate(){
         Process q = null;
-        for(int i=0;i<=20000;++i){
+        for(int i=0;i<=200000;++i){
 
             while(!arrivalMinHeap.isEmpty() && arrivalMinHeap.peek().arrivalTime<=i){
-                burstMinHeap.add(arrivalMinHeap.poll());
+                Process arrivingProcess = arrivalMinHeap.poll();
+                burstMinHeap.add(arrivingProcess);
             }
             if(burstMinHeap.isEmpty()) continue;
             if(q!=null){                                                     // Not first process, current process needs to be switched
-                if(q.PID!=burstMinHeap.peek().PID && q.burstTime > 0){       // if last one finished (burst = 0,do nth)
+                if(!q.PID.equals(burstMinHeap.peek().PID) && q.burstTime > 0){       // if last one finished (burst = 0,do nth)
                     i+=contextSwitchingDuration;                             // else skip context units
                 }
             }
@@ -50,9 +54,18 @@ public class SRTF {
                 if(stop==0) break;
             }
         }
+        print();
     }
 
     void print(){
+        PrintStream userScreen = System.out;
+        PrintStream file = null;
+        try {
+            file = new PrintStream(new File("SRTF.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.setOut(file);
         System.out.print("Time    Process\n");
         for(Pair<Integer,String> e : executionOrder){
             System.out.println(e.getKey()+"       P"+ e.getValue());
@@ -69,6 +82,6 @@ public class SRTF {
         }
         System.out.println("Average Waiting Time Using SRTF scheduling : " + AverageWaitingTime);
         System.out.println("Average TurnAround Time Using SRTF scheduling : " + AverageTurnAroundTime);
-
+        System.setOut(userScreen);
     }
 }

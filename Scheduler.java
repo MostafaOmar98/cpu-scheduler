@@ -1,8 +1,6 @@
 import java.util.List;
 
 public abstract class Scheduler {
-    final static protected String spacer = "================================================";
-    final static protected String miniSpacer = "===============";
     protected Integer nProcesses;
     protected Integer contextSwitchingDuration;
     protected List<Process> processes;
