@@ -18,15 +18,15 @@ public class Main {
     private static Integer nProcesses;
     private static Integer contextSwitchingDuration;
     private static List<Process> processes = new ArrayList<>();
-//    public static Scanner inputReader;
-//
-//    static {
-//        try {
-//            inputReader = new Scanner(new File("./input.txt"));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    /*public static Scanner inputReader;
+
+    static {
+        try {
+            inputReader = new Scanner(new File("./input.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     public static void main(String[] args) {
         inputProcesses();

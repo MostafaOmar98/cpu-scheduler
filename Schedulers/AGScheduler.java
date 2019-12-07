@@ -41,8 +41,8 @@ public class AGScheduler extends Scheduler {
             }
 
             if (runTime == 0) {
-                time += (currentProcess.get_quantum() + 1) / 2;
-                runTime += (currentProcess.get_quantum() + 1) / 2;
+                time += min(currentProcess.burstTime, (currentProcess.get_quantum() + 1) / 2);
+                runTime += min(currentProcess.burstTime, (currentProcess.get_quantum() + 1) / 2);
             }
 
             Boolean switched = false;
