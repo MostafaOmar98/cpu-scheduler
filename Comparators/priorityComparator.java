@@ -1,3 +1,7 @@
+package Comparators;
+
+import Processes.Process;
+
 import java.util.Comparator;
 
 public class priorityComparator implements Comparator<Process> {

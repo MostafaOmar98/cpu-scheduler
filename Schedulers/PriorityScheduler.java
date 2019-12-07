@@ -1,9 +1,14 @@
+package Schedulers;
+
+import Comparators.priorityComparator;
+import Processes.Process;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class PriorityScheduler extends Scheduler {
-    PriorityScheduler(Integer nProcesses, Integer contextSwitchingDuration, List<Process> processes) {
+    public PriorityScheduler(Integer nProcesses, Integer contextSwitchingDuration, List<Process> processes) {
         super(nProcesses, contextSwitchingDuration, processes);
     }
 
@@ -11,12 +16,12 @@ public class PriorityScheduler extends Scheduler {
     public void simulate() {
         Process currentRunningProcess = null;
         List<Process> order = new ArrayList<>();
-        PriorityQueue<Process> priorityBasedqueue = new PriorityQueue<Process>(nProcesses , new priorityComparator());
+        PriorityQueue<Process> priorityBasedqueue = new PriorityQueue<>(nProcesses, new priorityComparator());
         for(Process p : processes){
             p.originalPriority = p.priorityNumber;
             priorityBasedqueue.add(p);
         }
-        for(int time = 0 ; time <= 200000 ; ++time){
+        for (int time = 0; time <= 200000; ++time) {
 
             for ( Process p :priorityBasedqueue) {
                 if(p.arrivalTime <= time){
@@ -26,13 +31,13 @@ public class PriorityScheduler extends Scheduler {
             }
             for (Process p : priorityBasedqueue){
                 if(p.arrivalTime <= time){
-                    currentRunningProcess = priorityBasedqueue.poll(); ;
+                    currentRunningProcess = priorityBasedqueue.poll();
 
                     break;
                 }
             }
             if(currentRunningProcess != null){ /// since nonpreemptive then we take all time once
-//                Process Current = priorityBasedqueue.poll();
+//                Processes.Process Current = priorityBasedqueue.poll();
                 order.add(currentRunningProcess);
                 currentRunningProcess.turnaroundTime = time + currentRunningProcess.burstTime + contextSwitchingDuration ;
                 currentRunningProcess.waitingTime = currentRunningProcess.turnaroundTime - currentRunningProcess.arrivalTime;
