@@ -27,8 +27,8 @@ public class Printer {
         writer.println(spacer);
     }
 
-    Printer(OutputStream outputStream) {
-        writer = new PrintWriter(outputStream);
+    public Printer(OutputStream outputStream) {
+        writer = new PrintWriter(outputStream, true);
     }
 
     public void print(PrintType type, Integer time) {
