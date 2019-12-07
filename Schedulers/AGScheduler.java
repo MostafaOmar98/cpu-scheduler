@@ -73,7 +73,14 @@ public class AGScheduler extends Scheduler {
                 currentProcess.set_quantum((int) ceil(currentProcess.get_quantum() * 0.1 + currentProcess.get_quantum()));
                 currentProcess.burstTime -= runTime;
                 System.out.println("Time: " + time + "\tDone: " + currentProcess);
-                System.out.println("Added Process to ready queue");
+                if (currentProcess.burstTime > 0) {
+                    readyQueue.add(currentProcess);
+                    System.out.println("Added Process to ready queue");
+                } else {
+                    currentProcess.set_quantum(0);
+                    dieList.add(currentProcess);
+                    System.out.println("Added Process to die list");
+                }
                 System.out.println(miniSpacer);
                 currentProcess = null;
             }
@@ -110,7 +117,7 @@ public class AGScheduler extends Scheduler {
     private void convertToAGProcesses() {
         List<Process> temp = new LinkedList<>();
         for (Process process : processes) {
-            System.out.print("Enter Quantum for Processes.Process " + process.PID + ": ");
+            System.out.print("Enter Quantum for Process " + process.PID + ": ");
             Integer quantum = inputReader.nextInt();
             temp.add(new AGProcess(process, quantum));
         }

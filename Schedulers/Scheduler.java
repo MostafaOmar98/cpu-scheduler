@@ -8,7 +8,7 @@ public abstract class Scheduler {
     Integer nProcesses;
     Integer contextSwitchingDuration;
     protected List<Process> processes;
-    static String spacer = "================================================";
+    public static String spacer = "================================================";
     static String miniSpacer = "===============";
 
     Scheduler(Integer nProcesses, Integer contextSwitchingDuration, List<Process> processes) {
