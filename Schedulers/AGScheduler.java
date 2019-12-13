@@ -37,7 +37,7 @@ public class AGScheduler extends Scheduler {
                 if (readyQueue.isEmpty()) continue;
                 currentProcess = readyQueue.poll();
                 assert currentProcess != null;
-                currentProcess.waitingTime = time - currentProcess.get_timeSinceReady();
+                currentProcess.waitingTime += time - currentProcess.get_timeSinceReady();
                 System.out.println("Time: " + time + "\tStarting: " + currentProcess);
                 readyQueue.remove(currentProcess);
                 runTime = 0;
@@ -64,6 +64,7 @@ public class AGScheduler extends Scheduler {
                     System.out.println("Time: " + time + "\tDone: " + currentProcess);
                     pushBackToReady(currentProcess, runTime, time);
                     currentProcess = agProcess;
+                    System.out.println(currentProcess.PID + " " + currentProcess.get_timeSinceReady() + " " + time);
                     currentProcess.waitingTime += time - currentProcess.get_timeSinceReady();
                     System.out.println("Time: " + time + "\tStarting: " + currentProcess);
                     readyQueue.remove(currentProcess);
@@ -72,6 +73,7 @@ public class AGScheduler extends Scheduler {
                     break;
                 }
             }
+
 
             if (!switched) {
                 currentProcess.set_quantum((int) ceil(currentProcess.get_quantum() * 0.1 + currentProcess.get_quantum()));
@@ -83,7 +85,7 @@ public class AGScheduler extends Scheduler {
                     System.out.println("Added Process: " + currentProcess + " to ready queue");
                 } else {
                     currentProcess.set_quantum(0);
-                    currentProcess.turnaroundTime = time - currentProcess.turnaroundTime + 1;
+                    currentProcess.turnaroundTime = time - currentProcess.turnaroundTime;
                     dieList.add(currentProcess);
                     System.out.println("Added Process: " + currentProcess + " to die list");
                 }
@@ -97,7 +99,6 @@ public class AGScheduler extends Scheduler {
         Printer printer = new Printer(System.out);
         Double averageWait = 0.0, averageTAT = 0.0;
         for (Process process : dieList) {
-            process.waitingTime++;
             printer.print(process);
             averageWait += process.waitingTime;
             averageTAT += process.turnaroundTime;
@@ -130,9 +131,9 @@ public class AGScheduler extends Scheduler {
         for (Process process : processes) {
             if (process.arrivalTime <= time) {
                 AGProcess toBeAdded = new AGProcess(process, ((AGProcess) process).get_quantum());
-                toBeAdded.set_timeSinceReady(time);
+                toBeAdded.set_timeSinceReady(process.arrivalTime);
                 toBeAdded.waitingTime = 0;
-                toBeAdded.turnaroundTime = time;
+                toBeAdded.turnaroundTime = process.arrivalTime;
                 readyQueue.add(toBeAdded);
                 toBeRemoved.add(process);
             }

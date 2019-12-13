@@ -3,6 +3,8 @@ package MainPack;
 import Processes.Process;
 import Schedulers.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,11 +16,11 @@ import java.util.Scanner;
 // TODO create roundRobin variable and read round robin time quantum
 
 public class Main {
-    public static Scanner inputReader = new Scanner(System.in);
-    private static Integer nProcesses;
+    public static Scanner inputReader;
     private static Integer contextSwitchingDuration;
     private static List<Process> processes = new ArrayList<>();
-    /*public static Scanner inputReader;
+    //    public static Scanner inputReader = new Scanner(System.in);
+    private static Integer nProcesses;
 
     static {
         try {
@@ -26,7 +28,7 @@ public class Main {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     public static void main(String[] args) {
         inputProcesses();
